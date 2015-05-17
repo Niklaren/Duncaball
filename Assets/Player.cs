@@ -32,7 +32,7 @@ public class Player : MonoBehaviour {
 	void Update () {
 		Move ();
 
-		print(rb.velocity);
+		print(rb.velocity.magnitude);
 
 		Look ();
 		
@@ -63,6 +63,7 @@ public class Player : MonoBehaviour {
 		CheckGrounded();
 		if(grounded)
 		{
+			if(rb.velocity.magnitude < 30)
 			ControlledMovement ();
 		}
 		UncontrolledMovement ();
