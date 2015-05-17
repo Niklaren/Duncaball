@@ -4,6 +4,7 @@ using System.Collections;
 public class Player : MonoBehaviour {
 
 	public float pitch, yaw, roll;
+	public Camera camera;
 
 	public float jump_speed = 6.6f;
 	public float run_speed = 0.5f;
@@ -17,6 +18,8 @@ public class Player : MonoBehaviour {
 		back_speed = 0.25f * run_speed;
 		side_speed = 0.75f * run_speed;
 		rb = GetComponent<Rigidbody>();
+
+
 	}
 	
 	// Update is called once per frame
@@ -32,16 +35,16 @@ public class Player : MonoBehaviour {
 
 	void Look(){
 		float deltaX = Input.GetAxis("Mouse X");
-		float deltaY = Input.GetAxis ("Mouse Y");
-		pitch += deltaX;
-		yaw -= deltaY;
+		//float deltaY = Input.GetAxis ("Mouse Y");
+		pitch += deltaX * 2.0f;
+		//yaw -= deltaY;
 		roll += 0;
 
 		WrapAngle(pitch);
 		WrapAngle(yaw);
 		WrapAngle(roll);
 
-		transform.localEulerAngles = new Vector3(yaw, pitch, 0);
+		transform.localEulerAngles = new Vector3(0, pitch, 0);
 		//transform.rotation.x = (transform.rotation.x + deltaX);
 		//transform.localRotation = Quaternion.Euler (pitch, yaw, roll);
 	}

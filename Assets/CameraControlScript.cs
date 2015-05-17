@@ -3,8 +3,7 @@ using System.Collections;
 
 public class CameraControlScript : MonoBehaviour {
 
-	public float Yaw = 0F;
-	public float Pitch = 45F;
+	public float yaw = 0F;
 
 	void Start()
 	{
@@ -13,27 +12,16 @@ public class CameraControlScript : MonoBehaviour {
 	
 	void Update()
 	{
-		if (Input.GetKeyDown(KeyCode.Escape))
-			Application.Quit();
-
-		float scroll = Input.GetAxis ("Mouse ScrollWheel");
-
-		if (!(Input.GetMouseButton(0) || Input.GetMouseButton(1) || Input.GetMouseButton(2)) && (scroll == 0))
-			return;
-		
-		float deltaX = Input.GetAxis("Mouse X");
+		//float deltaX = Input.GetAxis("Mouse X");
 		float deltaY = Input.GetAxis ("Mouse Y");
+		//pitch += deltaX;
+		yaw -= deltaY *1.5f;
 
-		if (Input.GetMouseButton (1)) {
-			ChangeYaw (deltaX);
-			ChangePitch (-deltaY);
-		} else if (scroll != 0) {
-			MoveForwards (scroll * 4);
-		}
-		else if (Input.GetMouseButton (2)) {
-			Strafe (-deltaX * 0.5f);
-			ChangeHeight (-deltaY);
-		}
+		//WrapAngle(pitch);
+		WrapAngle(ref yaw);
+		//WrapAngle(roll);
+			
+		transform.localEulerAngles = new Vector3(yaw, 0, 0);
 	}
 	
 	void MoveForwards(float f)
@@ -50,11 +38,11 @@ public class CameraControlScript : MonoBehaviour {
 	{
 		transform.position += (h * Vector3.up);
 	}
-	
+	/*
 	void ChangeYaw(float y)
 	{
-		Yaw += y;
-		WrapAngle(ref Yaw);
+		yaw += y;
+		WrapAngle(ref yaw);
 		transform.localEulerAngles = new Vector3(Pitch, Yaw, 0);
 	}
 	
@@ -64,7 +52,7 @@ public class CameraControlScript : MonoBehaviour {
 		WrapAngle(ref Pitch);
 		transform.localEulerAngles = new Vector3(Pitch, Yaw, 0);
 	}
-	
+	*/
 	public static void WrapAngle(ref float angle)
 	{
 		if (angle < -360F)
