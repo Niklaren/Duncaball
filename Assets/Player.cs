@@ -15,6 +15,7 @@ public class Player : MonoBehaviour {
 	private float ground_threshhold;
 	private bool grounded;
 	private float distance_to_ground;
+	private Vector3 velocity;
 
 	private Rigidbody rb;
 
@@ -63,13 +64,16 @@ public class Player : MonoBehaviour {
 		CheckGrounded();
 		if(grounded)
 		{
-			if(rb.velocity.magnitude < 30)
+			if(rb.velocity.magnitude < 100)
 			ControlledMovement ();
 		}
+		
 		UncontrolledMovement ();
 	}
 	
 	void ControlledMovement(){
+		velocity = new Vector3(0,0,0);
+	
 		if (Input.GetKey ("w"))
 			MoveForwards (run_speed);
 		if (Input.GetKey ("s"))
@@ -78,6 +82,8 @@ public class Player : MonoBehaviour {
 			MoveLeft (side_speed);
 		if (Input.GetKey ("d"))
 			MoveRight (side_speed);
+			
+		rb.velocity = velocity;
 		if(Input.GetKeyDown("space"))
 			Jump();
 	}
@@ -116,16 +122,18 @@ public class Player : MonoBehaviour {
 
 	void MoveForwards(float f)
 	{
-		rb.AddForce(transform.forward * f);
+	velocity += transform.forward * f;
+		//rb.AddForce(transform.forward * f);
 	}
 
 	void MoveLeft(float f)
 	{
-		rb.AddForce(transform.right * -f);
+	velocity -= transform.right * f;
+		//rb.AddForce(transform.right * -f);
 	}
 
 	void MoveRight(float f)
 	{
-		rb.AddForce(transform.right * f);
+	velocity += transform.right * f;
 	}
 }
