@@ -8,17 +8,23 @@ public class Player : MonoBehaviour {
 
 	public float jump_speed = 6.6f;
 	public float run_speed = 0.5f;
+	
 	private float back_speed;
 	private float side_speed;
+	
+	private float ground_threshhold;
+	private bool grounded;
+	private float distance_to_ground;
 
-	public Rigidbody rb;
+	private Rigidbody rb;
 
 	// Use this for initialization
 	void Start () {
+	    ground_threshhold = 0.1f;
 		back_speed = 0.25f * run_speed;
 		side_speed = 0.75f * run_speed;
 		rb = GetComponent<Rigidbody>();
-
+		distance_to_ground = GetComponent<Collider>().bounds.extents.y + ground_threshhold;
 
 	}
 	
@@ -26,17 +32,21 @@ public class Player : MonoBehaviour {
 	void Update () {
 		Move ();
 
-		if(Input.GetKeyDown("space"))
-		   Jump();
+		print(rb.velocity);
 
 		Look ();
 		
 	}
 
+	void CheckGrounded()
+	{
+		grounded = Physics.Raycast(transform.position, -transform.up, distance_to_ground);
+	}
+	
 	void Look(){
 		float deltaX = Input.GetAxis("Mouse X");
 		//float deltaY = Input.GetAxis ("Mouse Y");
-		pitch += deltaX * 2.0f;
+		pitch += deltaX * 4.0f;
 		//yaw -= deltaY;
 		roll += 0;
 
@@ -50,7 +60,11 @@ public class Player : MonoBehaviour {
 	}
 
 	void Move(){
-		ControlledMovement ();
+		CheckGrounded();
+		if(grounded)
+		{
+			ControlledMovement ();
+		}
 		UncontrolledMovement ();
 	}
 	
@@ -63,6 +77,8 @@ public class Player : MonoBehaviour {
 			MoveLeft (side_speed);
 		if (Input.GetKey ("d"))
 			MoveRight (side_speed);
+		if(Input.GetKeyDown("space"))
+			Jump();
 	}
 	
 	void UncontrolledMovement(){
@@ -99,21 +115,16 @@ public class Player : MonoBehaviour {
 
 	void MoveForwards(float f)
 	{
-		transform.position += (f * transform.forward);
+		rb.AddForce(transform.forward * f);
 	}
 
 	void MoveLeft(float f)
 	{
-		transform.position -= (f * transform.right);
+		rb.AddForce(transform.right * -f);
 	}
 
 	void MoveRight(float f)
 	{
-		transform.position += (f * transform.right);
-	}
-
-	void Strafe(float s)
-	{
-		transform.position += (s * transform.right);
+		rb.AddForce(transform.right * f);
 	}
 }
