@@ -19,16 +19,18 @@ public class Player : MonoBehaviour {
 	
 	private float back_speed;
 	private float side_speed;
-	
+
+	private float slide_speed;
+
 	private float ground_threshhold;
 	private bool grounded;
 	private float distance_to_ground;
 	private Vector3 velocity;
 
-	
-	
-	public GameObject grab_zone;
+	public GameObject swivel;
+
 	bool has_ball;
+	bool sliding;
 
 	// Use this for initialization
 	void Start () {
@@ -43,8 +45,8 @@ public class Player : MonoBehaviour {
 		distance_to_ground = GetComponent<Collider>().bounds.extents.y + ground_threshhold;
 
 		foreach (Transform child in transform){
-			if (child.name == "grab zone"){
-				grab_zone = child.gameObject;
+			if (child.name == "swivel"){
+				swivel = child.gameObject;
 			}
 		}
 		ball = GameObject.FindWithTag ("ball");
@@ -57,6 +59,8 @@ public class Player : MonoBehaviour {
 		//print(rb.velocity.magnitude);
 
 		Look ();
+
+		Slide ();
 
 		if(Input.GetKeyDown ("e"))
 			GrabBall ();
@@ -102,23 +106,23 @@ public class Player : MonoBehaviour {
 	
 	void ControlledMovement(){
 		velocity = Vector3.zero;
-		if(grounded)
-		{
-			if (Input.GetKey ("w"))
-				MoveForwards (run_speed);
-			if (Input.GetKey ("s"))
-				MoveForwards (-back_speed);
-			if (Input.GetKey ("a"))
-				MoveLeft (side_speed);
-			if (Input.GetKey ("d"))
-				MoveRight (side_speed);
-			
-			rb.velocity = velocity;
-			if(Input.GetKeyDown("space"))
-				Jump();
-		}
-		else
-		{
+		if(grounded){
+			velocity = new Vector3(0,0,0);
+
+			if (!sliding) {
+				if (Input.GetKey ("w"))
+					MoveForwards (run_speed);
+				if (Input.GetKey ("s"))
+					MoveForwards (-back_speed);
+				if (Input.GetKey ("a"))
+					MoveLeft (side_speed);
+				if (Input.GetKey ("d"))
+					MoveRight (side_speed);
+
+				if(Input.GetKeyDown("space"))
+					Jump();
+			}
+		}else{
 			if (Input.GetKey ("w"))
 				MoveForwards (run_speed*0.01f);
 			if (Input.GetKey ("s"))
@@ -127,10 +131,12 @@ public class Player : MonoBehaviour {
 				MoveLeft (side_speed*0.01f);
 			if (Input.GetKey ("d"))
 				MoveRight (side_speed*0.01f);
-			
-			rb.velocity += velocity;
-			
+
 		}
+
+		rb.velocity = velocity;
+		if(Input.GetKeyDown("space"))
+			Jump();
 	}
 	
 	void UncontrolledMovement(){
@@ -145,7 +151,35 @@ public class Player : MonoBehaviour {
 	}
 	
 	void Slide(){
-		
+
+		if (Input.GetKeyDown ("r")) {
+			// code to get forward velocity
+			int forwardVel = (int)transform.InverseTransformDirection(rb.velocity).z;
+			//Debug.Log (forwardVel);
+			int speed_for_slide = 9;
+			
+			if(forwardVel >= speed_for_slide && sliding == false){
+				// new slide
+				sliding = true;
+				slide_speed = 9.0f;
+			}
+		}
+		else if (Input.GetKey ("r")) {
+			if (sliding){
+				sliding = true;
+				slide_speed -= 0.25f;
+				if(slide_speed <= 0.0f)
+					sliding = false;
+			}
+		} else {
+			sliding = false;
+		}
+
+		if (sliding) {
+			Debug.Log ("sliding");
+			Debug.Log (slide_speed);
+			rb.velocity += transform.forward * slide_speed;
+		}
 	}
 
 	void GrabBall(){
@@ -177,7 +211,7 @@ public class Player : MonoBehaviour {
 		if (has_ball) {
 			has_ball = false;
 			Debug.Log("throw success");
-			Vector3 throw_direction = grab_zone.GetComponent<Transform> ().forward;
+			Vector3 throw_direction = swivel.GetComponent<Transform> ().forward;
 			float throw_force = 100.0f;
 			ball.GetComponent<Rigidbody> ().AddForce (throw_direction * throw_force);
 		}
@@ -213,6 +247,3 @@ public class Player : MonoBehaviour {
 	velocity += transform.right * f;
 	}
 }
-
-
-

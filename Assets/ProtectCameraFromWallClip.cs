@@ -115,14 +115,15 @@ namespace UnityStandardAssets.Cameras
                 Debug.DrawRay(m_Ray.origin, -m_Pivot.forward*(targetDist + sphereCastRadius), Color.red);
             }
 
+
             // hit something so move the camera to a better position
             protecting = hitSomething;
             m_CurrentDist = Mathf.SmoothDamp(m_CurrentDist, targetDist, ref m_MoveVelocity,
                                            m_CurrentDist > targetDist ? clipMoveTime : returnTime);
             m_CurrentDist = Mathf.Clamp(m_CurrentDist, closestDistance, m_OriginalDist);
-        //    m_Cam.localPosition = (-Vector3.forward*m_CurrentDist) + offset;
+        	//m_Cam.localPosition = (-Vector3.forward*m_CurrentDist) + offset;
+           // m_Cam.localPosition = (-Vector3.forward*m_CurrentDist) + (new Vector3(3,1,0)*(1/m_CurrentDist));
         }
-
 
         // comparer for check distances in ray cast hits
         public class RayHitComparer : IComparer
