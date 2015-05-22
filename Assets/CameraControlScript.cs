@@ -4,6 +4,9 @@ using System.Collections;
 public class CameraControlScript : MonoBehaviour {
 
 	public float yaw = 0F;
+	public Vector3 cam_target;
+	
+	RaycastHit hit;
 
 	void Start()
 	{
@@ -22,6 +25,12 @@ public class CameraControlScript : MonoBehaviour {
 		//WrapAngle(roll);
 			
 		transform.localEulerAngles = new Vector3(yaw, 0, 0);
+		cam_target = transform.position + transform.forward*10000;
+	}
+	
+	public Vector3 Get_Target()
+	{
+		return cam_target;
 	}
 	
 	void MoveForwards(float f)

@@ -25,6 +25,8 @@ public class Player : MonoBehaviour {
 	private float distance_to_ground;
 	private Vector3 velocity;
 
+	
+	
 	public GameObject grab_zone;
 	bool has_ball;
 
@@ -32,7 +34,7 @@ public class Player : MonoBehaviour {
 	void Start () {
 		Screen.lockCursor = true;
 		//Cursor.lockState = true;
-		ballOffset = new Vector3(0.0f, 0.0f, 1.0f);
+		ballOffset = new Vector3(0.0f, 1.25f, 0.0f);
 
 	    ground_threshhold = 0.1f;
 		back_speed = 0.25f * run_speed;
@@ -99,20 +101,36 @@ public class Player : MonoBehaviour {
 	}
 	
 	void ControlledMovement(){
-		velocity = new Vector3(0,0,0);
-	
-		if (Input.GetKey ("w"))
-			MoveForwards (run_speed);
-		if (Input.GetKey ("s"))
-			MoveForwards (-back_speed);
-		if (Input.GetKey ("a"))
-			MoveLeft (side_speed);
-		if (Input.GetKey ("d"))
-			MoveRight (side_speed);
+		velocity = Vector3.zero;
+		if(grounded)
+		{
+			if (Input.GetKey ("w"))
+				MoveForwards (run_speed);
+			if (Input.GetKey ("s"))
+				MoveForwards (-back_speed);
+			if (Input.GetKey ("a"))
+				MoveLeft (side_speed);
+			if (Input.GetKey ("d"))
+				MoveRight (side_speed);
 			
-		rb.velocity = velocity;
-		if(Input.GetKeyDown("space"))
-			Jump();
+			rb.velocity = velocity;
+			if(Input.GetKeyDown("space"))
+				Jump();
+		}
+		else
+		{
+			if (Input.GetKey ("w"))
+				MoveForwards (run_speed*0.01f);
+			if (Input.GetKey ("s"))
+				MoveForwards (-back_speed*0.01f);
+			if (Input.GetKey ("a"))
+				MoveLeft (side_speed*0.01f);
+			if (Input.GetKey ("d"))
+				MoveRight (side_speed*0.01f);
+			
+			rb.velocity += velocity;
+			
+		}
 	}
 	
 	void UncontrolledMovement(){
@@ -195,3 +213,6 @@ public class Player : MonoBehaviour {
 	velocity += transform.right * f;
 	}
 }
+
+
+

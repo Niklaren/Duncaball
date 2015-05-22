@@ -13,6 +13,9 @@ namespace UnityStandardAssets.Cameras
         public float closestDistance = 0.5f;            // the closest distance the camera can be from the target
         public bool protecting { get; private set; }    // used for determining if there is an object between the target and the camera
         public string dontClipTag = "Player";           // don't clip against objects with this tag (useful for not clipping against the targeted object)
+        
+        public GameObject swivel;
+		CameraControlScript cam;
 
         private Transform m_Cam;                  // the transform of the camera
         private Transform m_Pivot;                // the point at which the camera pivots around
@@ -22,11 +25,16 @@ namespace UnityStandardAssets.Cameras
         private Ray m_Ray;                        // the ray used in the lateupdate for casting between the camera and the target
         private RaycastHit[] m_Hits;              // the hits between the camera and the target
         private RayHitComparer m_RayHitComparer;  // variable to compare raycast hit distances
-
+        private Vector3 target;
+		private Vector3 offset;
 
         private void Start()
         {
+			offset = transform.localPosition;
             // find the camera in the object hierarchy
+            cam = swivel.GetComponent<CameraControlScript>();
+            target = cam.Get_Target();
+            
             m_Cam = GetComponentInChildren<Camera>().transform;
             m_Pivot = m_Cam.parent;
             m_OriginalDist = m_Cam.localPosition.magnitude;
@@ -39,6 +47,10 @@ namespace UnityStandardAssets.Cameras
 
         private void LateUpdate()
         {
+        	target = cam.Get_Target();
+        	print (target);
+        	
+        	transform.LookAt(target,transform.up);
             // initially set the target distance
             float targetDist = m_OriginalDist;
 
@@ -108,7 +120,7 @@ namespace UnityStandardAssets.Cameras
             m_CurrentDist = Mathf.SmoothDamp(m_CurrentDist, targetDist, ref m_MoveVelocity,
                                            m_CurrentDist > targetDist ? clipMoveTime : returnTime);
             m_CurrentDist = Mathf.Clamp(m_CurrentDist, closestDistance, m_OriginalDist);
-            m_Cam.localPosition = -Vector3.forward*m_CurrentDist;
+        //    m_Cam.localPosition = (-Vector3.forward*m_CurrentDist) + offset;
         }
 
 
