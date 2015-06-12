@@ -168,8 +168,10 @@ public class Player : MonoBehaviour {
 			if (sliding){
 				sliding = true;
 				slide_speed -= 0.25f;
-				if(slide_speed <= 0.0f)
-					sliding = false;
+				if(slide_speed <= 0.0f){
+					//sliding = false;
+					slide_speed = 0.0f;
+				}
 			}
 		} else {
 			sliding = false;
