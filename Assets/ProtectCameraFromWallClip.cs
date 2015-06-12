@@ -13,8 +13,7 @@ namespace UnityStandardAssets.Cameras
         public float closestDistance = 0.5f;            // the closest distance the camera can be from the target
         public bool protecting { get; private set; }    // used for determining if there is an object between the target and the camera
         public string dontClipTag = "Player";           // don't clip against objects with this tag (useful for not clipping against the targeted object)
-        
-        public GameObject swivel;
+
 		CameraControlScript cam;
 
         private Transform m_Cam;                  // the transform of the camera
@@ -32,7 +31,7 @@ namespace UnityStandardAssets.Cameras
         {
 			offset = transform.localPosition;
             // find the camera in the object hierarchy
-            cam = swivel.GetComponent<CameraControlScript>();
+            cam = transform.parent.GetComponent<CameraControlScript>();
             target = cam.Get_Target();
             
             m_Cam = GetComponentInChildren<Camera>().transform;
@@ -48,7 +47,7 @@ namespace UnityStandardAssets.Cameras
         private void LateUpdate()
         {
         	target = cam.Get_Target();
-        	print (target);
+        	//print (target);
         	
         	transform.LookAt(target,transform.up);
             // initially set the target distance

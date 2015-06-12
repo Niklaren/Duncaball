@@ -34,7 +34,9 @@ public class Player : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		Screen.lockCursor = true;
+		Cursor.lockState = CursorLockMode.Locked;
+		Cursor.visible = false;
+		//Screen.lockCursor = true;
 		//Cursor.lockState = true;
 		ballOffset = new Vector3(0.0f, 1.25f, 0.0f);
 
@@ -178,9 +180,12 @@ public class Player : MonoBehaviour {
 		}
 
 		if (sliding) {
-			Debug.Log ("sliding");
-			Debug.Log (slide_speed);
-			rb.velocity += transform.forward * slide_speed;
+			//Debug.Log ("sliding");
+			//Debug.Log (slide_speed);
+			//Debug.Log ("before" + rb.velocity);
+			rb.velocity = transform.forward * slide_speed;
+			//Debug.Log ("plus" + transform.forward * slide_speed);
+			//Debug.Log ("after" + rb.velocity);
 		}
 	}
 
@@ -234,18 +239,18 @@ public class Player : MonoBehaviour {
 
 	void MoveForwards(float f)
 	{
-	velocity += transform.forward * f;
+		velocity += transform.forward * f;
 		//rb.AddForce(transform.forward * f);
 	}
 
 	void MoveLeft(float f)
 	{
-	velocity -= transform.right * f;
+		velocity -= transform.right * f;
 		//rb.AddForce(transform.right * -f);
 	}
 
 	void MoveRight(float f)
 	{
-	velocity += transform.right * f;
+		velocity += transform.right * f;
 	}
 }
